@@ -102,7 +102,7 @@ export default function Home() {
           >
             {restaurants.map((item, index) => {
               return (
-                <Grid item xs={10} sm={6}>
+                <Grid item xs={12} sm={6}>
                   <RestaurantCard
                     key={index}
                     id={index + 1}

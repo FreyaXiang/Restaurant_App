@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import SearchIcon from "@material-ui/icons/Search";
-import { Paper, TextField, Grid, Button } from "@material-ui/core";
+import {
+  Paper,
+  TextField,
+  Grid,
+  Button,
+  NativeSelect,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -15,6 +21,10 @@ const useStyles = makeStyles((theme) => ({
   text: {
     marginBottom: 10,
   },
+  select: {
+    marginBottom: 10,
+    width: "100%",
+  },
   icon: {
     height: "40px",
     width: "40px",
@@ -26,11 +36,15 @@ export default function SearchBox(props) {
 
   // handle state
   const [item, setItem] = useState({
-    restaurantLocation: "Time Square, Manhattan, NYC",
+    restaurantLocation: "Times Square, Manhattan, NYC",
     restaurantName: "",
   });
 
-  function handleName(event) {
+  // [longitude, latitiude]
+  // default location is Time Square, Manhattan, NYC
+  const [userLocation, setUserLocation] = useState(["-73.985130", "40.758896"]);
+
+  function handleChange(event) {
     const { name, value } = event.target;
     setItem((prv) => {
       return {
@@ -38,33 +52,25 @@ export default function SearchBox(props) {
         [name]: value,
       };
     });
-  }
 
-  // Get the user location
-  // default location is Time Square, Manhattan, NY
-  // longitude, latitiude
-  const [userLocation, setUserLocation] = useState(["-73.985130", "40.758896"]);
-
-  // get user location and handle error
-  function handleLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-      console.log("Geolocation is not supported by this browser.");
+    // get user location and handle error
+    if (value === "Times Square, Manhattan, NYC") {
+      setUserLocation(["-73.985130", "40.758896"]);
+    } else if (value === "Current Location") {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
     }
   }
 
   function showPosition(position) {
-    setItem((prv) => {
-      return {
-        ...prv,
-        restaurantLocation: "Current Location",
-      };
-    });
     setUserLocation([position.coords.longitude, position.coords.latitude]);
   }
 
   function showError(error) {
+    // console log error msg
     switch (error.code) {
       case error.PERMISSION_DENIED:
         console.log("User denied the request for Geolocation.");
@@ -79,22 +85,34 @@ export default function SearchBox(props) {
         console.log("An unknown error occurred.");
         break;
       default:
-        console.log("Other error occurred");
+        console.log("An error occurred.");
     }
+
+    // if error occurred, set back to default location NYC
+    setItem((prv) => {
+      return {
+        ...prv,
+        restaurantLocation: "Times Square, Manhattan, NYC",
+      };
+    });
+    setUserLocation(["-73.985130", "40.758896"]);
   }
 
   return (
     <Paper elevation={3} className={classes.paper}>
       <Grid container spacing={3} direction="row">
         <Grid item xs={12} sm={5}>
-          <TextField
-            placeholder="Time Square, Manhattan, NYC"
-            fullWidth
-            className={classes.text}
+          <NativeSelect
             value={item.restaurantLocation}
-            onClick={handleLocation}
+            onChange={handleChange}
+            className={classes.select}
             name="restaurantLocation"
-          />
+          >
+            <option value="Times Square, Manhattan, NYC">
+              Times Square, Manhattan, NYC
+            </option>
+            <option value="Current Location">Current Location</option>
+          </NativeSelect>
         </Grid>
         <Grid item xs={12} sm={5}>
           <TextField
@@ -103,7 +121,7 @@ export default function SearchBox(props) {
             fullWidth
             className={classes.text}
             value={item.restaurantName}
-            onChange={handleName}
+            onChange={handleChange}
             name="restaurantName"
           />
         </Grid>

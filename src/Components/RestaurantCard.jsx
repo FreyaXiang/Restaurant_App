@@ -8,8 +8,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(2),
-    margin: "20px 10px 0",
-    height: "150px",
+    margin: "20px 15px 0",
   },
 }));
 
