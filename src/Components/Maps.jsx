@@ -8,7 +8,7 @@ function Maps(props) {
     width: "100%",
   };
 
-  var iconBase = "http://maps.google.com/mapfiles/kml/paddle/";
+  var iconBase = "https://maps.google.com/mapfiles/kml/paddle/";
 
   const center = {
     lat: Number(props.userLocation[1]),

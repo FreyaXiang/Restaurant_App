@@ -65,6 +65,7 @@ export default function Home() {
       })
       .catch((error) => {
         console.log(error);
+        alert("Error: Cannot fetch data.");
       });
   }
 
@@ -102,7 +103,7 @@ export default function Home() {
           >
             {restaurants.map((item, index) => {
               return (
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} key={index}>
                   <RestaurantCard
                     key={index}
                     id={index + 1}
